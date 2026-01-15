@@ -1,22 +1,30 @@
 #!/bin/bash
 
-echo "🚀 Iniciando SQL Server..."
-docker-compose up -d
+echo "🚀 Parando containers anteriores..."
+docker compose down
 
-echo "⏳ Aguardando SQL Server inicializar (30 segundos)..."
-sleep 30
+echo "🚀 Iniciando SQL Server..."
+docker compose up -d
+
+echo "⏳ Aguardando SQL Server inicializar..."
+sleep 35
 
 echo "📊 Executando script de inicialização do banco de dados..."
-docker exec -it sqlserver_teste /opt/mssql-tools/bin/sqlcmd \
-    -S localhost -U SA -P 'MyStrongPass123!' \
-    -i /docker-entrypoint-initdb.d/init.sql
+docker exec -it sqlserver_teste /opt/mssql-tools18/bin/sqlcmd \
+    -S localhost -U SA -P 'MyStrongPass123!' -C \
+    -i /init.sql
 
 echo "✅ Banco de dados configurado!"
 echo ""
-echo "Para executar a query da solução:"
-echo "docker exec -it sqlserver_teste /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'MyStrongPass123!' -i /teste1/task1.sql"
+echo "🎯 Executando a query da solução..."
+docker exec -it sqlserver_teste /opt/mssql-tools18/bin/sqlcmd \
+    -S localhost -U SA -P 'MyStrongPass123!' -C \
+    -i /task1.sql
 echo ""
-echo "Ou conecte usando:"
+echo "📝 Para conectar manualmente use:"
+echo "docker exec -it sqlserver_teste /opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P 'MyStrongPass123!' -C"
+echo ""
+echo "Ou conecte via cliente externo:"
 echo "Server: localhost,1433"
 echo "User: SA"
 echo "Password: MyStrongPass123!"
